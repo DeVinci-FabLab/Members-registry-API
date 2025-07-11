@@ -1,20 +1,23 @@
-# STEP 1 - Base Image
+# Dockerfile
 FROM python:3.12-slim
 
-# STEP 2 - Install uv
-RUN pip install --no-cache-dir uv
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
-# STEP 3 - Set the working directory
+# Change the working directory to the `app` directory
 WORKDIR /app
 
-# STEP 4 - Copy the dependency file 
-COPY pyproject.toml uv.lock ./
+# Install dependencies
+RUN --mount=type=cache,target=/root/.cache/uv \
+    --mount=type=bind,source=uv.lock,target=uv.lock \
+    --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
+    uv sync --locked --no-install-project --no-editable
 
-# STEP 5 - Install dependencies
-RUN uv pip install --system --no-deps
+# Copy the project into the intermediate image
+ADD . /app
 
-# STEP 6 - Copy the application code
-COPY . .
+# Sync the project
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --locked --no-editable
 
-# STEP 7 - Expose the port the app runs on
-CMD ["python", "-m", "src"]
+# Command to run the app
+CMD ["uv", "run", "app/main.py", "--port", "80", "--host", "0.0.0.0"]
