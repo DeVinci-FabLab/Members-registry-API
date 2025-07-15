@@ -42,12 +42,24 @@ entity "Member_Status" as MS {
 '========== PROMOTION =========='
 entity "Promotion" as P {
   *id : int <<PK>>
-  school : varchar
   year : int
   level : varchar
   apprentice : bool
-  major : varchar
+  school : int <<FK>>
+  major : int <<FK>>
 }
+
+entity "School" as E {
+  *id : int <<PK>>
+  name : varchar
+}
+
+entity "Major" as MJ {
+  *id : int <<PK>>
+  name : varchar
+  school_id : int <<FK>>
+}
+
 
 '========== CONTRIBUTION =========='
 entity "Contribution" as C {
@@ -72,7 +84,12 @@ entity "IR" as IR {
 entity "Role" as R {
   *id : int <<PK>>
   name : varchar
-  type : varchar  'CODIR / CG / CHARGE'
+  type : int <<FK>>
+}
+
+entity "Role type" as RT {
+  *id : int <<PK>>
+  name : varchar
 }
 
 entity "Member_Role" as MR {
@@ -85,6 +102,12 @@ entity "Training" as T {
   *id : int <<PK>>
   name : varchar
   description : varchar
+  type_id : int <<FK>>
+}
+
+entity "TrainingType" as TT {
+  *id : int <<PK>>
+  name : varchar
 }
 
 entity "Member_Training" as MT {
@@ -104,5 +127,10 @@ M ||--o{ MR : holds
 R ||--o{ MR : defined by
 M ||--o{ MT : attended
 T ||--o{ MT : listed in
+T }o--|| TT : categorized as
+P }o--|| E : belongs to
+P }o--|| MJ : specialized in
+MJ }o--|| E : defined by
+R }o--|| RT : categorized as
 
 @enduml

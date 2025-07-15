@@ -1,9 +1,9 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, Date
 from app.db.session import Base
 
-class Role(Base):
-    __tablename__ = "role"
+class Training_Type(Base):
+    __tablename__ = "training_type"
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False, unique=True)
-    description = Column(String, nullable=True)
+    

@@ -2,7 +2,7 @@ from sqlalchemy import Column, Integer, String, Boolean, Date, ForeignKey
 from app.db.session import Base
 
 class Member(Base):
-    __tablename__ = "members"
+    __tablename__ = "member"
 
     id = Column(Integer, primary_key=True, index=True)
     last_name = Column(String, nullable=False)
