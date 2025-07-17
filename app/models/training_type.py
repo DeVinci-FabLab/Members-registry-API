@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String, Date
-from app.db.session import Base
+from app.db.base import Base
 
 class Training_Type(Base):
     __tablename__ = "training_type"

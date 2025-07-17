@@ -1,9 +1,9 @@
-from sqlalchemy import Column, Integer, Date
-from app.db.session import Base
+from sqlalchemy import Column, Integer, Date, ForeignKey
+from app.db.base import Base
 
 class Member_Training(Base):
     __tablename__ = "member_training"
     
-    member_id = Column(Integer, primary_key=True, index=True, foreign_key="member.id")
-    training = Column(Integer, primary_key=True, index=True, foreign_key="training.id")
+    member_id = Column(Integer, ForeignKey("member.id"), primary_key=True, index=True)
+    training = Column(Integer, ForeignKey("training.id"), primary_key=True, index=True)
     participation_date = Column(Date, nullable=False)

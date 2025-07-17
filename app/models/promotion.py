@@ -1,12 +1,12 @@
-from sqlalchemy import Column, Integer, String, Boolean
-from app.db.session import Base
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
+from app.db.base import Base
 
-class Contribution(Base):
-    __tablename__ = "contribution"
+class Promotion(Base):
+    __tablename__ = "promotion"
     
     id = Column(Integer, primary_key=True, index=True)
     year = Column(Integer, nullable=False)
     level = Column(String, nullable=False)
     apprentice = Column(Boolean, nullable=False)
-    school_id = Column(Integer, nullable=False, index=True, foreign_key="school.id")
-    major_id = Column(Integer, nullable=False, index=True, foreign_key="major.id")
+    school_id = Column(Integer, ForeignKey("school.id"), nullable=False, index=True)
+    major_id = Column(Integer, ForeignKey("major.id"), nullable=False, index=True)

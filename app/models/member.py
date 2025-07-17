@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String, Boolean, Date, ForeignKey
-from app.db.session import Base
+from app.db.base import Base
 
 class Member(Base):
     __tablename__ = "member"
@@ -23,7 +23,5 @@ class Member(Base):
     modified_at = Column(Date)
     convs = Column(Boolean, default=False)
     portal = Column(Boolean, default=False)
-    trainer_id = Column(Integer, ForeignKey("trainer.id"))
-    status_id = Column(Integer, ForeignKey("status.id"))
     promotion_id = Column(Integer, ForeignKey("promotion.id"))
 

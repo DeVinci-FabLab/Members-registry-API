@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String
-from app.db.session import Base
+from app.db.base import Base
 
 class Status(Base):
     __tablename__ = "status"

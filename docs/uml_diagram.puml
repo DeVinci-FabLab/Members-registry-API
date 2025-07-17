@@ -23,8 +23,6 @@ entity "Member" as M {
   modified_at : date
   convs : bool
   portal : bool
-  trainer_id : int <<FK>>
-  status_id : int <<FK>>
   promotion_id : int <<FK>>
 }
 

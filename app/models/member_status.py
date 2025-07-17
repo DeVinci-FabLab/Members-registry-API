@@ -1,8 +1,8 @@
-from sqlalchemy import Column, Integer, String
-from app.db.session import Base
+from sqlalchemy import Column, Integer, String, ForeignKey
+from app.db.base import Base
 
 class Member_Status(Base):
     __tablename__ = "member_status"
 
-    member_id = Column(Integer, primary_key=True, index=True, foreign_key="member.id")
-    status_id = Column(Integer, primary_key=True, index=True, foreign_key="status.id")
+    member_id = Column(Integer, ForeignKey("member.id"), primary_key=True, index=True)
+    status_id = Column(Integer, ForeignKey("status.id"), primary_key=True, index=True)

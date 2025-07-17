@@ -21,15 +21,12 @@ class MemberBase(BaseModel):
     modified_at: Optional[date]
     convs: Optional[bool]
     portal: Optional[bool]
-    trainer_id: Optional[int]
-    status_id: Optional[int]
     promotion_id: Optional[int]
 
 class MemberCreate(MemberBase):
     pass
 
-class Member(MemberBase):
+class MemberRead(MemberBase):
     id: int
-
     class Config:
-        orm_mode = True
+        from_attributes = True

@@ -1,4 +1,4 @@
-from .member import Member, MemberCreate
+from .member import MemberRead, MemberCreate
 from .promotion import Promotion, School, Major
 from .status import Status, MemberStatus
 from .contribution import Contribution
