@@ -14,7 +14,6 @@ class Member(Base):
     personal_email = Column(String)
     phone = Column(String)
     discord = Column(String)
-    trainers = Column(String)
     notes = Column(String)
     srg = Column(Boolean, default=False)
     warning = Column(Integer, default=0)
@@ -24,6 +23,7 @@ class Member(Base):
     modified_at = Column(Date)
     convs = Column(Boolean, default=False)
     portal = Column(Boolean, default=False)
+    trainer_id = Column(Integer, ForeignKey("trainer.id"))
     status_id = Column(Integer, ForeignKey("status.id"))
     promotion_id = Column(Integer, ForeignKey("promotion.id"))
 

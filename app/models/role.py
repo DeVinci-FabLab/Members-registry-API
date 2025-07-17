@@ -7,3 +7,4 @@ class Role(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False, unique=True)
     description = Column(String, nullable=True)
+    type = Column(Integer, nullable=False, index=True, foreign_key="role_type.id")

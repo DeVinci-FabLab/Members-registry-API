@@ -14,7 +14,6 @@ entity "Member" as M {
   personal_email : varchar
   phone : varchar
   discord : varchar
-  trainers : varchar
   notes : varchar
   srg : bool
   warning : int
@@ -24,6 +23,7 @@ entity "Member" as M {
   modified_at : date
   convs : bool
   portal : bool
+  trainer_id : int <<FK>>
   status_id : int <<FK>>
   promotion_id : int <<FK>>
 }
@@ -84,10 +84,11 @@ entity "IR" as IR {
 entity "Role" as R {
   *id : int <<PK>>
   name : varchar
+  description : varchar
   type : int <<FK>>
 }
 
-entity "Role type" as RT {
+entity "RoleType" as RT {
   *id : int <<PK>>
   name : varchar
 }
@@ -117,6 +118,15 @@ entity "Member_Training" as MT {
   status : varchar
 }
 
+'========== TRAINERS =========='
+
+entity "Trainer" as MTR {
+  *member_id : int <<FK>>
+  *training_id : int <<FK>>
+  assigned_date : date
+}
+
+
 '========== ASSOCIATIONS =========='
 M ||--o{ MS : has
 S ||--o{ MS : classified as
@@ -132,5 +142,7 @@ P }o--|| E : belongs to
 P }o--|| MJ : specialized in
 MJ }o--|| E : defined by
 R }o--|| RT : categorized as
+M ||--o{ MTR : trains
+T ||--o{ MTR : has trainers
 
 @enduml
