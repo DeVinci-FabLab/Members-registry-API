@@ -5,12 +5,10 @@ sys.path.append("/app")
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
 
-from app.db.session import create_tables
 from app.api.routes import member as member_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    create_tables()
     print("✅ Application started and database tables created!")
     yield
     print("🛑 Application shutting down!")

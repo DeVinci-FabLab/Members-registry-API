@@ -9,7 +9,7 @@ def get_members(db: Session, skip: int = 0, limit: int = 100) -> list[Member]:
     return db.query(Member).offset(skip).limit(limit).all()
 
 def create_member(db: Session, member: MemberCreate) -> Member:
-    db_member = Member(firstame=member.first_name,
+    db_member = Member(first_name=member.first_name,
                        last_name=member.last_name,
                        present=member.present,)
     db.add(db_member)

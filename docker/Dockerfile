@@ -19,5 +19,9 @@ ADD . /app
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --locked --no-editable
 
-# Command to run the app
-CMD ["uv", "run", "app/main.py", "--port", "80", "--host", "0.0.0.0"]
+# Ajouter le script d'entrée
+COPY docker/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+# Utiliser le script comme point d'entrée
+ENTRYPOINT ["/entrypoint.sh"]
