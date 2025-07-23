@@ -8,7 +8,7 @@ class MemberBase(BaseModel):
     present: bool
     arrival: Optional[date]
     departure: Optional[date]
-    email: Optional[EmailStr]
+    email: EmailStr
     personal_email: Optional[EmailStr]
     phone: Optional[str]
     discord: Optional[str]

@@ -11,6 +11,8 @@ services:
       - DATABASE_URL=${DATABASE_URL}
     depends_on:
       - db
+    volumes:
+      - ../migrations:/app/migrations
 
   db:
     image: postgres:15

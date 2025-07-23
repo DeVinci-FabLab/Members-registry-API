@@ -7,4 +7,4 @@ class Training(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False, unique=True)
     description = Column(String, nullable=True)
-    type_id = Column(Integer, ForeignKey("training_type.id"), index=True)
+    type_id = Column(Integer, ForeignKey("training_type.id"))

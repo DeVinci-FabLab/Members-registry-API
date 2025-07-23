@@ -8,5 +8,5 @@ class Promotion(Base):
     year = Column(Integer, nullable=False)
     level = Column(String, nullable=False)
     apprentice = Column(Boolean, nullable=False)
-    school_id = Column(Integer, ForeignKey("school.id"), nullable=False, index=True)
-    major_id = Column(Integer, ForeignKey("major.id"), nullable=False, index=True)
+    school_id = Column(Integer, ForeignKey("school.id"), nullable=False)
+    major_id = Column(Integer, ForeignKey("major.id"), nullable=False)
