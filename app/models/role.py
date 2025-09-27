@@ -4,7 +4,7 @@ from app.db.base import Base
 class Role(Base):
     __tablename__ = "role"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     name = Column(String, nullable=False, unique=True)
     description = Column(String, nullable=True)
     type = Column(Integer, ForeignKey("role_type.id"), nullable=False)

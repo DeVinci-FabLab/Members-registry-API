@@ -4,6 +4,6 @@ from app.db.base import Base
 class School(Base):
     __tablename__ = "school"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     name = Column(String, nullable=False, unique=True)
     

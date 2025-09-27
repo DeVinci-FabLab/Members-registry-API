@@ -25,13 +25,9 @@ if config.config_file_name is not None:
 from app.models.member import Member
 from app.models.promotion import Promotion
 from app.models.status import Status
-from app.models.training import Training
-from app.models.training_type import Training_Type
-from app.models.trainer import Trainer
 from app.models.school import School
 from app.models.role import Role
 from app.models.role_type import Role_Type
-from app.models.member_training import Member_Training
 from app.models.member_status import Member_Status
 from app.models.member_role import Member_Role
 from app.models.major import Major
