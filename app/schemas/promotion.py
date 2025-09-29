@@ -24,9 +24,7 @@ class MajorRead(BaseModel):
     name: str
     code: str
     school_id: int
-    level_id: str
-    is_alternance: Optional[bool] = None
-
+    level_id: int
     class Config:
         from_attributes = True
 

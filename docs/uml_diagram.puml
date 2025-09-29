@@ -44,7 +44,6 @@ entity "Promotion" as P {
   school_id : int <<FK>>
   level_id : int <<FK>>
   major_id : int <<FK>> (nullable)
-  is_alternance : bool
 }
 
 entity "School" as E {
@@ -65,7 +64,7 @@ entity "Major" as MJ {
   code : varchar
   school_id : int <<FK>>
   level_id : int <<FK>>
-  is_alternance : bool (nullable)
+  ' is_alternance removed
 }
 
 '========== CONTRIBUTION =========='

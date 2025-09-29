@@ -6,6 +6,7 @@ from fastapi import FastAPI
 from contextlib import asynccontextmanager
 
 from app.api.routes import member as member_router
+from app.api.routes import promotion as promotion_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -23,6 +24,7 @@ def health_check():
 
 # ✅ Ajoute le routeur
 app.include_router(member_router.router)
+app.include_router(promotion_router.router)
 
 # ✅ Entrée locale
 if __name__ == "__main__":
