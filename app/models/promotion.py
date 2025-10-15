@@ -6,7 +6,7 @@ from app.db.base import Base
 class Promotion(Base):
     __tablename__ = "promotion"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     year = Column(Integer, nullable=False)
     level_id = Column(Integer, ForeignKey("level.id"), nullable=False)
     school_id = Column(Integer, ForeignKey("school.id"), nullable=False)

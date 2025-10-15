@@ -78,90 +78,73 @@ def _get_or_create_major(db: Session, name: str, school_id: int, level_id: Optio
     db.flush()
     return major
 
-def parse_descriptor(descriptor: str) -> Tuple[Optional[str], Optional[str], Optional[str], bool]:
+def parse_descriptor(descriptor: str) -> Tuple[Optional[str], Optional[str], Optional[str], bool, Optional[int]]:
     """
-    Parse descriptor examples:
-      "ESILV ANNEE 4 - IRO"
-      "IIM - ANNEE 5 - ALTERNANCE - DIRECTION ARTISTIQUE"
-      "ESILV ANNEE 3"
-    Returns (school_name, level_token, major_name, is_apprentice)
+    Examples:
+      "Étudiants ESILV A4 CREATECH_E 2024"
+      "Étudiants ESILV A4 OCC 2025"
+      "Étudiants IIM A4 ALT DA 2024"
+
+    Returns:
+      (school_name, level_token, major_name, is_apprentice, year)
     """
-    parts = [p.strip() for p in re.split(r'[-/]', descriptor) if p.strip()]
-    school = None
+    text = descriptor.strip()
+    # Remove prefix like "Étudiants" or similar
+    text = re.sub(r'^(Étudiants|Etudiants|Etudiant|Étudiant)\s+', '', text, flags=re.IGNORECASE)
+
+    # Extract year (4 digits at the end)
+    year_match = re.search(r'(\d{4})$', text)
+    year = int(year_match.group(1)) if year_match else None
+    if year:
+        text = text[:year_match.start()].strip()
+
+    # Extract school (assume first token)
+    tokens = text.split()
+    if not tokens:
+        return None, None, None, False, year
+
+    school = tokens[0].upper()
+    remaining = tokens[1:]
+
+    # Extract level (A1, A2, A3, A4, A5, ANNEE X)
     level_token = None
-    major = None
-    is_appr = False
+    for i, t in enumerate(remaining):
+        if re.match(r'^A\d$', t.upper()) or re.match(r'^ANNEE\s*\d$', t.upper()):
+            level_token = t.upper().replace("ANNEE", "A").strip()
+            remaining = remaining[i + 1 :]
+            break
 
-    # Flatten tokens and search for keywords
-    tokens = []
-    for p in parts:
-        tokens.extend([t.strip() for t in re.split(r'\s{2,}|\s-\s', p) if t.strip()])
+    # Detect alternance
+    is_appr = any("ALT" in t.upper() or "ALTERNANCE" in t.upper() for t in remaining)
 
-    # heuristic: school is first token until we see "ANNEE" or "A\d"
-    combined = " ".join(parts)
-    # find level
-    m = re.search(r'\bANNEE\s*(\d)\b', combined, flags=re.IGNORECASE)
-    if not m:
-        m = re.search(r'\bA\s*(\d)\b', combined, flags=re.IGNORECASE)
-    if m:
-        level_token = f"A{m.group(1)}"
-    # detect alternance
-    if re.search(r'\bALTERNANCE\b|\bAPPRENTICE\b|\bAPPRENTISSAGE\b', combined, flags=re.IGNORECASE):
-        is_appr = True
+    # Remove ALT / ALTERNANCE tokens from major
+    major_tokens = [t for t in remaining if not re.match(r'ALT(ERNANCE)?', t, re.IGNORECASE)]
+    major = " ".join(major_tokens).strip() if major_tokens else None
 
-    # determine school: take first token that is not "ANNEE" token and not major/alternance
-    # assume first word(s) before 'ANNEE' are school name
-    if re.search(r'\bANNEE\b', combined, flags=re.IGNORECASE):
-        school = combined.split(re.search(r'\bANNEE\b', combined, flags=re.IGNORECASE).group(0))[0].strip(" -")
-    else:
-        # if parts length >=1, first part probably school
-        school = parts[0].strip()
+    return school, level_token, major, is_appr, year
 
-    # determine major: look for known pattern after ANNEE or last part that is not alternance
-    # last part that is not "ALTERNANCE"
-    for p in reversed(parts):
-        if re.search(r'\bALTERNANCE\b|\bAPPRENTICE\b', p, flags=re.IGNORECASE):
-            continue
-        if re.search(r'\bANNEE\b|\bA\s*\d\b', p, flags=re.IGNORECASE):
-            continue
-        # if p contains school name only, skip
-        if p.strip().lower() == school.strip().lower():
-            continue
-        major = p
-        break
 
-    # sanitize
-    if school:
-        school = re.sub(r'\bANNEE\b.*$', '', school, flags=re.IGNORECASE).strip(" -")
-    if major:
-        major = major.strip()
-
-    return school or None, level_token or None, major or None, is_appr
-
-def create_promotion_from_descriptor(db: Session, descriptor: str, year: Optional[int] = None) -> Promotion:
-    school_name, level_token, major_name, is_appr = parse_descriptor(descriptor)
+def create_promotion_from_descriptor(db: Session, descriptor: str) -> Promotion:
+    school_name, level_token, major_name, is_appr, year = parse_descriptor(descriptor)
     if not school_name:
-        raise ValueError("Cannot determine school from descriptor")
+        raise ValueError(f"Cannot determine school from descriptor: {descriptor}")
 
-    # determine promotion year (use provided year or current calendar year)
-    promotion_year = int(year) if year else date.today().year
+    promotion_year = year or date.today().year
 
     # ensure entities exist
     school = _get_or_create_school(db, school_name)
     level = _get_or_create_level(db, level_token or "A1")
-    major = None
-    if major_name:
-        major = _get_or_create_major(db, major_name, school.id, level.id)
+    major = _get_or_create_major(db, major_name, school.id, level.id) if major_name else None
 
-    # create promotion if not exists (unique semantics can vary; here check identical tuple)
-    qry = db.query(Promotion).filter(
+    # Check existing
+    existing = db.query(Promotion).filter(
         Promotion.school_id == school.id,
         Promotion.level_id == level.id,
         Promotion.year == promotion_year,
         Promotion.major_id == (major.id if major else None),
         Promotion.is_apprentice == bool(is_appr)
-    )
-    existing = qry.first()
+    ).first()
+
     if existing:
         return existing
 
@@ -170,7 +153,7 @@ def create_promotion_from_descriptor(db: Session, descriptor: str, year: Optiona
         level_id=level.id,
         school_id=school.id,
         major_id=(major.id if major else None),
-        is_apprentice=bool(is_appr)
+        is_apprentice=is_appr,
     )
     db.add(promo)
     db.commit()
