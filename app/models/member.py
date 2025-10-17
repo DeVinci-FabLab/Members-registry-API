@@ -1,4 +1,5 @@
 from sqlalchemy import Column, Integer, String, Boolean, Date, ForeignKey
+from sqlalchemy.orm import relationship
 from app.db.base import Base
 
 class Member(Base):
@@ -25,3 +26,4 @@ class Member(Base):
     portal = Column(Boolean, default=False)
     promotion_id = Column(Integer, ForeignKey("promotion.id"))
 
+    statuses = relationship("Status", secondary="member_status", back_populates="members")

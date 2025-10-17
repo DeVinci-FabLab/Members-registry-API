@@ -24,6 +24,15 @@ def get_promotions(db: Session, skip: int = 0, limit: int = 100) -> list[Promoti
         joinedload(Promotion.major),
     ).offset(skip).limit(limit).all()
 
+def get_majors(db: Session, skip: int = 0, limit: int = 100) -> list[Major]:
+    return db.query(Major).offset(skip).limit(limit).all()
+
+def get_levels(db: Session, skip: int = 0, limit: int = 100) -> list[Level]:
+    return db.query(Level).offset(skip).limit(limit).all()
+
+def get_schools(db: Session, skip: int = 0, limit: int = 100) -> list[School]:
+    return db.query(School).offset(skip).limit(limit).all()
+
 def _get_or_create_school(db: Session, name: str) -> School:
     name = name.strip()
     school = db.query(School).filter(School.name.ilike(name)).first()
@@ -159,3 +168,55 @@ def create_promotion_from_descriptor(db: Session, descriptor: str) -> Promotion:
     db.commit()
     db.refresh(promo)
     return promo
+
+def create_promotion(db: Session, year: int, level_id: int, school_id: int, major_id: Optional[int], is_apprentice: bool) -> Promotion:
+    promo = Promotion(
+        year=year,
+        level_id=level_id,
+        school_id=school_id,
+        major_id=major_id,
+        is_apprentice=is_apprentice,
+    )
+    db.add(promo)
+    db.commit()
+    db.refresh(promo)
+    return promo
+
+def delete_promotion(db: Session, promotion_id: int) -> bool:
+    promo = get_promotion(db, promotion_id)
+    if promo is None:
+        return False
+    db.delete(promo)
+    db.commit()
+    return True
+
+def update_promotion(db: Session, promotion_id: int, year: Optional[int] = None, level_id: Optional[int] = None,
+                     school_id: Optional[int] = None, major_id: Optional[int] = None,
+                     is_apprentice: Optional[bool] = None) -> Optional[Promotion]:
+    promo = get_promotion(db, promotion_id)
+    if promo is None:
+        return None
+    if year is not None:
+        promo.year = year
+    if level_id is not None:
+        promo.level_id = level_id
+    if school_id is not None:
+        promo.school_id = school_id
+    if major_id is not None:
+        promo.major_id = major_id
+    if is_apprentice is not None:
+        promo.is_apprentice = is_apprentice
+    db.commit()
+    db.refresh(promo)
+    return promo
+
+def delete_promotion(db: Session, promotion_id: int) -> bool:
+    promo = get_promotion(db, promotion_id)
+    if promo is None:
+        return False
+    db.delete(promo)
+    db.commit()
+    return True
+
+def get_promotions_by_major(db: Session, major_id: int) -> list[Promotion]:
+    return db.query(Promotion).filter(Promotion.major_id == major_id).all()

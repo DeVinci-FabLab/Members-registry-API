@@ -8,3 +8,7 @@ class UserNotFoundException(HTTPException):
 class EmailAlreadyExistsException(HTTPException):
     def __init__(self, detail: str = "Email already exists"):
         super().__init__(status_code=status.HTTP_400_BAD_REQUEST, detail=detail)
+
+class StatusNotFoundException(HTTPException):
+    def __init__(self, detail: str = "Status not found"):
+        super().__init__(status_code=status.HTTP_404_NOT_FOUND, detail=detail)

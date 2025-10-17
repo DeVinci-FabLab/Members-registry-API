@@ -1,5 +1,8 @@
 from sqlalchemy.orm import Session
 from app.models.member import Member
+from app.models.major import Major
+from app.models.promotion import Promotion
+from app.models.status import Status
 from app.schemas.member import MemberCreate
 
 def get_member(db: Session, member_id: int) -> Member | None:
@@ -53,3 +56,16 @@ def delete_member(db: Session, member_id: int) -> bool:
     db.delete(db_member)
     db.commit()
     return True
+
+
+def get_members_by_major(db: Session, major_id: int):
+    return (
+        db.query(Member)
+        .join(Promotion, Member.promotion_id == Promotion.id)
+        .join(Major, Promotion.major_id == Major.id)
+        .filter(Major.id == major_id)
+        .all()
+    )
+
+def get_members_by_status(db: Session, status_id: int) -> list[Member]:
+    return db.query(Member).join(Member.statuses).filter(Status.id == status_id).all()

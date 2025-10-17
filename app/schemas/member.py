@@ -28,5 +28,8 @@ class MemberCreate(MemberBase):
 
 class MemberRead(MemberBase):
     id: int
+    last_name: str
+    first_name: str
+    present: bool
     class Config:
         from_attributes = True
