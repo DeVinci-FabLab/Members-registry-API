@@ -74,7 +74,6 @@ entity "Contribution" as C {
   state : varchar
   payment_date : date
   amount : float
-  payment_method : varchar
 }
 
 '========== INTERNAL REGULATION =========='

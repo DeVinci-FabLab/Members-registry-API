@@ -27,3 +27,4 @@ class Member(Base):
     promotion_id = Column(Integer, ForeignKey("promotion.id"))
 
     statuses = relationship("Status", secondary="member_status", back_populates="members")
+    contributions = relationship("Contribution", back_populates="member")

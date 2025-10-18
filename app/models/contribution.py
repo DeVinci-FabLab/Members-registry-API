@@ -1,4 +1,5 @@
 from sqlalchemy import Column, Integer, String, Date, Float, ForeignKey
+from sqlalchemy.orm import relationship
 from app.db.base import Base
 
 class Contribution(Base):
@@ -9,4 +10,5 @@ class Contribution(Base):
     state = Column(String, nullable=False)
     payment_date = Column(Date, nullable=False)
     amount = Column(Integer, nullable=False)
-    payment_method = Column(String, nullable=False)
+
+    member = relationship("Member", back_populates="contributions")
